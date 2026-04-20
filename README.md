@@ -17,3 +17,10 @@ Data yang diterima diproses menggunakan rangkaian fungsi iterator untuk mendapat
 
 Visualisasi Output
 Pencetakan hasil menggunakan format debug dalam println bertujuan untuk mempermudah pemeriksaan struktur data. Hal ini memastikan bahwa seluruh pesan yang dikirimkan oleh klien telah diterima secara utuh dan sesuai dengan format yang diharapkan sebelum server memberikan respon balik.
+
+## Reflection 2
+Pada tahap ini, fungsi handle_connection telah diperbarui sehingga tidak hanya membaca permintaan, tetapi juga memberikan respons balik. Program kini membaca file eksternal hello.html menggunakan modul fs (file system) dan mengirimkan isinya kembali ke klien melalui stream. 
+
+Hal yang dipelajari adalah pentingnya mematuhi format protokol HTTP, yaitu menyertakan baris status, header (seperti Content-Length), dan pemisah baris kosong sebelum mengirimkan isi konten. Hal ini memungkinkan browser untuk mengenali dan menampilkan halaman HTML dengan benar.
+
+![Commit 2 screen capture](assets/images/commit2.png)
