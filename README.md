@@ -35,3 +35,14 @@ Sebelumnya, terdapat duplikasi kode pada bagian pembacaan file dan pengiriman re
 Pemisahan dilakukan dengan menggunakan teknik pattern matching (atau tuple di dalam if ekspresi). Program sekarang hanya menentukan dua variabel kunci, yaitu status_line dan filename, berdasarkan validasi request_line. Setelah nilai tersebut ditentukan, proses pembacaan file dan pengiriman data dilakukan satu kali saja di akhir fungsi. Hal ini memisahkan antara "logika pemilihan konten" dengan "logika teknis pengiriman data".
 
 ![Commit 3 screen capture](assets/images/commit3.png)
+
+## Reflection 4
+Pada tahap ini, kita mensimulasikan perilaku server dalam menangani permintaan yang lambat menggunakan rute /sleep.
+
+### Simulasi Slow Response
+Kode thread::sleep(Duration::from_secs(10)); digunakan untuk menahan proses selama 10 detik sebelum server mengirimkan respons. Jika kita membuka dua jendela browser dan mengakses /sleep di jendela pertama, lalu segera mengakses halaman utama `/` di jendela kedua, kita akan menyadari bahwa halaman kedua tidak akan terbuka sampai jendela pertama selesai diproses.
+
+### Mengapa Hal Ini Terjadi?
+Hal ini membuktikan bahwa server kita saat ini bekerja secara single-threaded. Artinya, server hanya bisa memproses satu koneksi dalam satu waktu. Ketika satu koneksi sedang tertahan, seluruh sistem akan "membeku" bagi pengguna lain karena antrean koneksi berikutnya harus menunggu proses sebelumnya selesai sepenuhnya. 
+
+
