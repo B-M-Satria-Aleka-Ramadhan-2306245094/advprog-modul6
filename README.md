@@ -24,3 +24,14 @@ Pada tahap ini, fungsi handle_connection telah diperbarui sehingga tidak hanya m
 Hal yang dipelajari adalah pentingnya mematuhi format protokol HTTP, yaitu menyertakan baris status, header (seperti Content-Length), dan pemisah baris kosong sebelum mengirimkan isi konten. Hal ini memungkinkan browser untuk mengenali dan menampilkan halaman HTML dengan benar.
 
 ![Commit 2 screen capture](assets/images/commit2.png)
+
+## Reflection 3
+Pada tahap ini, dilakukan proses refactoring terhadap kode untuk meningkatkan efisiensi dan kemudahan pemeliharaan (maintainability).
+
+### Mengapa Refactoring Diperlukan?
+Sebelumnya, terdapat duplikasi kode pada bagian pembacaan file dan pengiriman respons di dalam blok if dan else. Duplikasi ini berisiko menimbulkan kesalahan jika kita ingin mengubah cara server mengirim respons di masa mendatang. Dengan refactoring, logika yang sama dikumpulkan di satu tempat, sehingga kode menjadi lebih "DRY" (Don't Repeat Yourself).
+
+### Pemisahan Respons (Split Response)
+Pemisahan dilakukan dengan menggunakan teknik pattern matching (atau tuple di dalam if ekspresi). Program sekarang hanya menentukan dua variabel kunci, yaitu status_line dan filename, berdasarkan validasi request_line. Setelah nilai tersebut ditentukan, proses pembacaan file dan pengiriman data dilakukan satu kali saja di akhir fungsi. Hal ini memisahkan antara "logika pemilihan konten" dengan "logika teknis pengiriman data".
+
+![Commit 3 screen capture](assets/images/commit3.png)
