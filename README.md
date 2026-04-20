@@ -45,4 +45,26 @@ Kode thread::sleep(Duration::from_secs(10)); digunakan untuk menahan proses sela
 ### Mengapa Hal Ini Terjadi?
 Hal ini membuktikan bahwa server kita saat ini bekerja secara single-threaded. Artinya, server hanya bisa memproses satu koneksi dalam satu waktu. Ketika satu koneksi sedang tertahan, seluruh sistem akan "membeku" bagi pengguna lain karena antrean koneksi berikutnya harus menunggu proses sebelumnya selesai sepenuhnya. 
 
+## Reflection 5
+Proyek ini berfokus pada pembangunan web server fungsional menggunakan bahasa pemrograman Rust, yang mengeksplorasi konsep manajemen jaringan, sistem berkas, hingga concurrency tingkat lanjut.
 
+1. Fondasi Penanganan Koneksi TCP
+Pengembangan dimulai dengan mengimplementasikan penanganan koneksi masuk menggunakan TcpListener. Aliran data mentah dari TcpStream dikelola secara efisien menggunakan BufReader, yang meminimalkan beban sistem dengan cara menyimpan data dalam memori perantara (buffer) sebelum diproses. Data tersebut kemudian ditransformasi menjadi baris-baris teks untuk divalidasi sesuai dengan standar protokol HTTP.
+
+2. Pengiriman Konten Statis dan Validasi Request
+Server dikembangkan agar mampu melayani permintaan spesifik dengan membaca file HTML eksternal menggunakan modul fs. Logika pemilihan konten diterapkan menggunakan penandaan rute (routing). Jika permintaan diarahkan ke halaman utama (/), server akan mengirimkan dokumen sukses, sedangkan permintaan ke alamat lain akan secara otomatis diarahkan ke halaman error 404. Hal ini dilakukan melalui proses refactoring untuk memisahkan antara logika penentuan status dengan logika teknis pengiriman respons, sehingga kode tetap efisien dan mudah dikembangkan.
+
+3. Analisis Keterbatasan Single-Threaded
+Untuk memahami tantangan performa, dilakukan simulasi "Slow Response" menggunakan rute /sleep yang menahan eksekusi selama beberapa detik. Hasil simulasi menunjukkan bahwa server yang bekerja pada satu utas tunggal (single-threaded) akan mengalami kemacetan total jika menangani permintaan yang berat. Permintaan baru tidak dapat diproses sampai permintaan sebelumnya selesai sepenuhnya, yang menyebabkan degradasi pengalaman pengguna secara signifikan.
+
+4. Implementasi Sistem Thread Pool (Multithreading)
+Solusi akhir dari proyek ini adalah penerapan sistem Thread Pool untuk menangani banyak koneksi secara bersamaan (concurrently).
+
+Sistem ini terdiri dari beberapa komponen kunci:
+- Worker: Unit kerja yang menampung utas (thread) mandiri untuk mengeksekusi tugas secara paralel.
+
+- MPSC Channel: Jalur komunikasi multi-producer, single-consumer yang digunakan untuk mengirimkan tugas dari server utama ke antrean worker.
+
+- Arc & Mutex: Mekanisme sinkronisasi data yang digunakan untuk membagikan antrean tugas ke seluruh worker secara aman, memastikan tidak ada tugas yang diambil oleh dua utas berbeda secara bersamaan.
+
+Dengan arsitektur ini, server kini mampu memproses permintaan secara konkuren, di mana permintaan berat tidak lagi menghambat kelancaran akses pengguna lainnya di jalur yang berbeda.
